@@ -17,4 +17,7 @@ router.post('/sendEmail', (req, res, next) => {
     sendFeedbackEmail(req.body);
 })
 
+//Test Router
+router.use('/test', require('./test'));
+
 module.exports = router;

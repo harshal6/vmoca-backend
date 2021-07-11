@@ -11,17 +11,26 @@ let transporter = nodemailer.createTransport({
 })
 
 module.exports = {
-    sendFeedbackEmail(data) {
+    sendFeedbackEmail(data, user) {
         transporter.sendMail({
             from: 'Virginia Moca <vmoca.org>', // sender address
             to: 'jayesh203.jp@gmail.com', // list of receivers
             subject: "Feedback Email", // Subject line
             html: ` 
-            <h3>Is Member of VMOCA ? : ${data.member}</h3> <h3>Any Children below 18 ? : ${data.childrean}</h3>` // html body
-
+            <h3>Feedback from User : ${user['First Name']}</h3>
+            <h3>Email : ${user['Email 1']}</h3>
+            <h3>Address : ${user['Address Line 1']}</h3>
+            <h3>City : ${user['City']}</h3>
+            <h3>State/Province : ${user['State/Province']}</h3>
+            <h3>Phone : ${user['Phone']}</h3>
+            <br>
+            <h4>Is Member of VMOCA ? : ${data.member}</h4> 
+            <h4>Any Children below 18 ? : ${data.childrean}</h4>
+            <h4>From where ${user['First Name']} heard about VMOCA ? : ${data.feedback}</h4>
+            ` // html body
         })
     },
-    sendTicketEmail(user, eventDetail, noOfTickets) {
+    sendTicketEmail(user, eventDetail, noOfTickets, date) {
         transporter.sendMail({
             from: 'Virginia Moca <vmoca.org>', // sender address
             to: user['Email 1'], // list of receivers
@@ -139,12 +148,9 @@ module.exports = {
                                 <tr>
                                   <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;">
                                     <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Hi ${user['First Name']},</p>
-                                    <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Congratulations, You ticket for Event ${eventDetail.name} is confirmed. Here are the details of Event.</p>
-                                    <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Event Start Date : ${eventDetail.eventDates.startDate}</p>
-                                    <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Event End Date : ${eventDetail.eventDates.endDate}<v/p>
-                                    <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Time Zone : ${eventDetail.eventDates.timeZone.name}<v/p>
+                                    <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Congratulations, Your ticket for Event ${eventDetail.name} is confirmed. Here are the details of Event.</p>
                                     <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Number of Tickets : ${noOfTickets}<v/p>
-                                    <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Good luck! Hope it works.</p>
+                                    <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Reserved Event Date  : ${date.split("T")[0]} <v/p>
                                   </td>
                                 </tr>
                               </table>

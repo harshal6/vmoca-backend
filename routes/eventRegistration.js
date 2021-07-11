@@ -75,7 +75,7 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
         neon.eventRegistrations(data)
             .then((result) => {
                 if (result.status == 200) {
-                    sendTicketEmail(user, eventDetail, req.body.attendees.length);
+                    sendTicketEmail(user, eventDetail, req.body.attendees.length, req.body.date);
                     res.status(200).json({ result: result.data });
                 }
             }).catch((err) => {
