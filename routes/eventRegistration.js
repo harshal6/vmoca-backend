@@ -40,7 +40,7 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
             registrationAmount = req.body.amount;
             ticketId = 3501;
             payment = [{
-                "amount": req.body.amount,
+                "amount": registrationAmount,
                 "id": "1234",
                 "creditCardOnline": {
                     "billingAddress": {
@@ -61,6 +61,13 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
                 "tenderType": 4
             }]
         }
+        var attendees = req.body.attendees;
+        var tickets = [];
+        attendees.forEach(element => {
+            var attendees = [];
+            attendees.push(element)
+            tickets.push({ attendees, ticketId })
+        });
         var data = {
             "registrantAccountId": user['Account ID'],
             "eventId": eventDetail.id,
@@ -68,11 +75,9 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
             "registrationAmount": registrationAmount,
             "registrationDateTime": registrationDate,
             "sendSystemEmail": true,
-            "tickets": [{
-                "attendees": req.body.attendees,
-                "ticketId": ticketId
-            },],
+            "tickets": tickets,
         }
+        console.log(data)
         neon.eventRegistrations(data)
             .then((result) => {
                 if (result.status == 200) {
@@ -80,8 +85,8 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
                     res.status(200).json({ result: result.data });
                 }
             }).catch((err) => {
-                console.log(err.response.data[0])
-                res.status(401).json({ err: err.response.data });
+                console.log(err.response)
+                res.status(401).json({ err: err.response });
             });
     }
 })
