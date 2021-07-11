@@ -18,7 +18,7 @@ let transporter = nodemailer.createTransport({
 })
 
 router.post('/register', getUser, getEventDetails, (req, res, next) => {
-    console.log(req.body)
+    console.log(req.user)
     var eventDetail = req.eventDetail.data;
     console.log(req.user)
     if (eventDetail == '') {
@@ -26,14 +26,20 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
     } else {
         var results = req.user;
         var user = results;
-        var date = new Date();
+        var date = new Date(req.body.date);
         var registrationDate = date.getFullYear() + '-' + parseInt(date.getMonth() + 1) + '-' + date.getDate() + 'T' + '00:00:00Z';
-        var data = {
-            "registrantAccountId": user['Account ID'],
-            "eventId": eventDetail.id,
-            "id": eventDetail.financialSettings.taxDeductiblePortion.purpose.id,
-            "payments": [{
-                "amount": 20,
+        var payment;
+        var registrationAmount;
+        if (eventDetail.id == 9695) {
+            //
+            ticketId = null;
+            payment = null;
+            registrationAmount = 0;
+        } else {
+            registrationAmount = req.body.amount;
+            ticketId = 3501;
+            payment = [{
+                "amount": req.body.amount,
                 "id": "1234",
                 "creditCardOnline": {
                     "billingAddress": {
@@ -52,25 +58,30 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
                 "note": "string",
                 "receivedDate": date.toISOString(),
                 "tenderType": 4
-            }],
-            "registrationAmount": 20,
+            }]
+        }
+        var data = {
+            "registrantAccountId": user['Account ID'],
+            "eventId": eventDetail.id,
+            "payments": payment,
+            "registrationAmount": registrationAmount,
             "registrationDateTime": registrationDate,
             "sendSystemEmail": true,
             "tickets": [{
                 "attendees": req.body.attendees,
-                "ticketId": 3501
-            }, ],
+                "ticketId": ticketId
+            },],
         }
-            neon.eventRegistrations(data)
-                .then((result) => {
-                    if (result.status == 200) {
-                        sendTicketEmail(user, eventDetail, req.body.attendees.length);
-                        res.status(200).json({ result: result.data });
-                    }
-                }).catch((err) => {
-                    console.log(err.response.data[0])
-                    res.status(401).json({ err: err.response.data });
-                });
+        neon.eventRegistrations(data)
+            .then((result) => {
+                if (result.status == 200) {
+                    sendTicketEmail(user, eventDetail, req.body.attendees.length);
+                    res.status(200).json({ result: result.data });
+                }
+            }).catch((err) => {
+                console.log(err.response.data[0])
+                res.status(401).json({ err: err.response.data });
+            });
     }
 })
 

@@ -27,19 +27,18 @@ class Client {
     }
 
     async findAccountUsingId(userId) {
-        console.log(userId)
         return new Promise((resolve, reject) => {
             axios.post(`${neonCrmBaseUrl}/accounts/search/`, {
-                    outputFields: ["Account ID", "Email 1", "First Name", "Last Name"],
-                    pagination: {
-                        pageSize: 1,
-                    },
-                    searchFields: [{
-                        field: "Account ID",
-                        operator: "EQUAL",
-                        value: userId,
-                    }, ],
+                outputFields: ["Account ID", "Email 1", "First Name", "Last Name", "Address Line 1", "Address Line 2", "State/Province", "City", "Zip Code", "Country"],
+                pagination: {
+                    pageSize: 1,
                 },
+                searchFields: [{
+                    field: "Account ID",
+                    operator: "EQUAL",
+                    value: userId,
+                }, ],
+            },
                 this.config
             ).then((result) => {
                 resolve(result)
@@ -52,19 +51,19 @@ class Client {
     async findAccount(email) {
         return new Promise((resolve, reject) => {
             axios.post(
-                    `${neonCrmBaseUrl}/accounts/search/`, {
-                        outputFields: ["Account ID", "Email 1", "First Name", "Last Name"],
-                        pagination: {
-                            pageSize: 1,
-                        },
-                        searchFields: [{
-                            field: "Email",
-                            operator: "EQUAL",
-                            value: email,
-                        }, ],
-                    },
-                    this.config
-                )
+                `${neonCrmBaseUrl}/accounts/search/`, {
+                outputFields: ["Account ID", "Email 1", "First Name", "Last Name"],
+                pagination: {
+                    pageSize: 1,
+                },
+                searchFields: [{
+                    field: "Email",
+                    operator: "EQUAL",
+                    value: email,
+                },],
+            },
+                this.config
+            )
                 .then(result => {
                     resolve(result)
                 })
@@ -77,21 +76,21 @@ class Client {
     async createAccount(email, firstName, lastName, phone, source = '') {
         return new Promise((resolve, reject) => {
             axios.post(`${neonCrmBaseUrl}/accounts`, {
-                    individualAccount: {
-                        origin: {
-                            originDetail: source,
-                        },
-                        primaryContact: {
-                            email1: email,
-                            firstName,
-                            lastName,
-                            addresses: [{
-                                isPrimaryAddress: true,
-                                phone1: phone,
-                            }, ],
-                        },
+                individualAccount: {
+                    origin: {
+                        originDetail: source,
                     },
-                }, this.config)
+                    primaryContact: {
+                        email1: email,
+                        firstName,
+                        lastName,
+                        addresses: [{
+                            isPrimaryAddress: true,
+                            phone1: phone,
+                        },],
+                    },
+                },
+            }, this.config)
                 .then((result) => {
                     resolve(result.data);
                 }).catch((err) => {
@@ -133,16 +132,14 @@ class Client {
         })
     }
 
-    //Donation will be done afterwards 
-    async donate(data) {
+    async recurringDonation(data) {
         return new Promise((resolve, reject) => {
-            axios.post(`${neonPayBaseUrl}/charges`, data
-                // Header will go here
-            ).then((result) => {
-                resolve(result)
-            }).catch((err) => {
-                reject(err);
-            });
+            axios.post(`${neonCrmBaseUrl}/recurring`, data, this.config)
+                .then((result) => {
+                    resolve(result)
+                }).catch((err) => {
+                    reject(err)
+                });
         })
     }
 
