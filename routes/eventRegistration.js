@@ -26,7 +26,8 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
     } else {
         var results = req.user;
         var user = results;
-        var date = new Date(req.body.date);
+        var todaysDate = new Date();
+        var date = new Date();
         var registrationDate = date.getFullYear() + '-' + parseInt(date.getMonth() + 1) + '-' + date.getDate() + 'T' + '00:00:00Z';
         var payment;
         var registrationAmount;
@@ -56,7 +57,7 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
                     "id": '1235'
                 },
                 "note": "string",
-                "receivedDate": date.toISOString(),
+                "receivedDate": todaysDate.toISOString(),
                 "tenderType": 4
             }]
         }
