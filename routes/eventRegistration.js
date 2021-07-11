@@ -18,6 +18,7 @@ let transporter = nodemailer.createTransport({
 })
 
 router.post('/register', getUser, getEventDetails, (req, res, next) => {
+    console.log(req.body)
     console.log(req.user)
     var eventDetail = req.eventDetail.data;
     console.log(req.user)
@@ -31,9 +32,10 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
         var registrationDate = date.getFullYear() + '-' + parseInt(date.getMonth() + 1) + '-' + date.getDate() + 'T' + '00:00:00Z';
         var payment;
         var registrationAmount;
-        if (eventDetail.id == 9695) {
-            //
+        console.log(req.body.attendees)
+        if (req.body.eventId == '9695') {
             ticketId = null;
+            tickets = [{ attendees: req.body.attendees }]
             payment = null;
             registrationAmount = 0;
         } else {
@@ -60,14 +62,14 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
                 "receivedDate": todaysDate.toISOString(),
                 "tenderType": 4
             }]
+            var attendees = req.body.attendees;
+            var tickets = [];
+            attendees.forEach(element => {
+                var attendees = [];
+                attendees.push(element)
+                tickets.push({ attendees, ticketId })
+            });
         }
-        var attendees = req.body.attendees;
-        var tickets = [];
-        attendees.forEach(element => {
-            var attendees = [];
-            attendees.push(element)
-            tickets.push({ attendees, ticketId })
-        });
         var data = {
             "registrantAccountId": user['Account ID'],
             "eventId": eventDetail.id,
