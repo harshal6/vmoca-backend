@@ -10,7 +10,6 @@ var neonCrm = require('../api/neonApi');
 let neon = new neonCrm.Client('virginiamocasandbox', process.env.API);
 
 router.post('/register', getUser, getMembershipTerm, (req, res, next) => {
-    console.log(req.body);
     if (req.memberShipLevel == '') {
         res.status(404).json({ message: "No Membership FOund" });
     } else {
@@ -22,6 +21,7 @@ router.post('/register', getUser, getMembershipTerm, (req, res, next) => {
             todaysDate.setFullYear(todaysDate.getFullYear() + 1);
             var endDate = todaysDate.toISOString();
             var userData = req.user;
+            var freq = req.body.frequency == 'Annually' ? 'YEAR' : 'MONTH';
             var memberShipData = req.memberShipLevel;
             var payMentDetail = req.body.user;
             var data = {
@@ -30,9 +30,9 @@ router.post('/register', getUser, getMembershipTerm, (req, res, next) => {
                     "id": memberShipData.id
                 },
                 "membershipLevel": memberShipData.membershipLevel,
-                "termDuration": memberShipData.duration,
-                "enrollType": memberShipData.type,
-                "termUnit": memberShipData.unit,
+                "termDuration": 1,
+                "enrollType": "JOIN",
+                "termUnit": freq,
                 "termStartDate": startDate,
                 "termEndDate": endDate,
                 "transactionDate": startDate,
