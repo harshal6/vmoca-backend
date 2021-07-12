@@ -21,7 +21,7 @@ module.exports = {
             <h3>Email : ${user.email}</h3>
             <h3>Address : ${user.address}</h3>
             <h3>City : ${user.city}</h3>
-            <h3>State/Province : ${user.sate}</h3>
+            <h3>State/Province : ${user.state}</h3>
             <h3>Phone : ${user.phone}</h3>
             <br>
             <h4>Is Member of VMOCA ? : ${data.member}</h4> 

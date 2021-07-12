@@ -18,11 +18,18 @@ router.post('/register', getUser, getMembershipTerm, (req, res, next) => {
         } else {
             var todaysDate = new Date();
             var startDate = todaysDate.toISOString();
-            todaysDate.setFullYear(todaysDate.getFullYear() + 1);
             var endDate = todaysDate.toISOString();
+            if (req.body.freq == 'Annually') {
+                todaysDate.setFullYear(todaysDate.getFullYear() + 1)
+                endDate = todaysDate.toISOString();
+            } else {
+                todaysDate.setMonth(todaysDate.getMonth() + 1)
+                endDate = todaysDate.toISOString();
+            }
             var userData = req.user;
-            var freq = req.body.frequency == 'Annually' ? 'YEAR' : 'MONTH';
             var memberShipData = req.memberShipLevel;
+            var freq = req.body.freq == 'Annually' ? 'YEAR' : 'MONTH';
+            var fee = req.body.freq == 'Annually' ? memberShipData.fee : (memberShipData.fee / 10)
             var payMentDetail = req.body.user;
             var data = {
                 "accountId": userData['Account ID'],
@@ -36,13 +43,13 @@ router.post('/register', getUser, getMembershipTerm, (req, res, next) => {
                 "termStartDate": startDate,
                 "termEndDate": endDate,
                 "transactionDate": startDate,
-                "fee": memberShipData.fee,
+                "fee": fee,
                 "sendAcknowledgeEmail": true,
                 "timestamps": {
                     "createdBy": userData['Account ID'],
                 },
                 "payments": [{
-                    "amount": memberShipData.fee,
+                    "amount": fee,
                     "creditCardOnline": {
                         "billingAddress": {
                             "addressLine1": payMentDetail.address,
