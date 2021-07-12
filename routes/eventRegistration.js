@@ -18,10 +18,7 @@ let transporter = nodemailer.createTransport({
 })
 
 router.post('/register', getUser, getEventDetails, (req, res, next) => {
-    console.log(req.body)
-    console.log(req.user)
     var eventDetail = req.eventDetail.data;
-    console.log(req.user)
     if (eventDetail == '') {
         res.status(404).json({ message: "No Event Found" })
     } else {
@@ -32,7 +29,6 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
         var registrationDate = date.getFullYear() + '-' + parseInt(date.getMonth() + 1) + '-' + date.getDate() + 'T' + '00:00:00Z';
         var payment;
         var registrationAmount;
-        console.log(req.body.attendees)
         if (req.body.eventId == '9695') {
             ticketId = null;
             tickets = [{ attendees: req.body.attendees }]
@@ -40,9 +36,9 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
             registrationAmount = 0;
         } else {
             registrationAmount = req.body.amount;
-            ticketId = 3501;
+            ticketId = 3504;
             payment = [{
-                "amount": registrationAmount,
+                "amount": registrationAmount ,
                 "id": "1234",
                 "creditCardOnline": {
                     "billingAddress": {
@@ -74,7 +70,7 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
             "registrantAccountId": user['Account ID'],
             "eventId": eventDetail.id,
             "payments": payment,
-            "registrationAmount": registrationAmount,
+            "registrationAmount": registrationAmount ,
             "registrationDateTime": registrationDate,
             "sendSystemEmail": true,
             "tickets": tickets,
@@ -83,7 +79,7 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
         neon.eventRegistrations(data)
             .then((result) => {
                 if (result.status == 200) {
-                    sendTicketEmail(user, eventDetail, req.body.attendees.length, req.body.date);
+                    sendTicketEmail(user, eventDetail, req.body.attendees.length, registrationDate);
                     res.status(200).json({ result: result.data });
                 }
             }).catch((err) => {

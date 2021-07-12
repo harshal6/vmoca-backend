@@ -14,7 +14,8 @@ router.use('/donations', donation);
 router.use('/membership', membership);
 
 router.post('/sendEmail', (req, res, next) => {
-    sendFeedbackEmail(req.body);
+    console.log(req.body)
+    sendFeedbackEmail(req.body.formData, req.body.user)
 })
 
 //Test Router

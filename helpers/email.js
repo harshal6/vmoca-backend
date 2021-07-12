@@ -17,16 +17,16 @@ module.exports = {
             to: 'jayesh203.jp@gmail.com', // list of receivers
             subject: "Feedback Email", // Subject line
             html: ` 
-            <h3>Feedback from User : ${user['First Name']}</h3>
-            <h3>Email : ${user['Email 1']}</h3>
-            <h3>Address : ${user['Address Line 1']}</h3>
-            <h3>City : ${user['City']}</h3>
-            <h3>State/Province : ${user['State/Province']}</h3>
-            <h3>Phone : ${user['Phone']}</h3>
+            <h3>Feedback from User : ${user.firstName}</h3>
+            <h3>Email : ${user.email}</h3>
+            <h3>Address : ${user.address}</h3>
+            <h3>City : ${user.city}</h3>
+            <h3>State/Province : ${user.sate}</h3>
+            <h3>Phone : ${user.phone}</h3>
             <br>
             <h4>Is Member of VMOCA ? : ${data.member}</h4> 
             <h4>Any Children below 18 ? : ${data.childrean}</h4>
-            <h4>From where ${user['First Name']} heard about VMOCA ? : ${data.feedback}</h4>
+            <h4>From where ${user.firstName} heard about VMOCA ? : ${data.exhibitions[0]}</h4>
             ` // html body
         })
     },
