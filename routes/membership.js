@@ -10,6 +10,8 @@ var neonCrm = require('../api/neonApi');
 let neon = new neonCrm.Client('virginiamocasandbox', process.env.API);
 
 router.post('/register', getUser, getMembershipTerm, (req, res, next) => {
+
+    console.log(req.body)
     if (req.memberShipLevel == '') {
         res.status(404).json({ message: "No Membership FOund" });
     } else {
@@ -29,7 +31,26 @@ router.post('/register', getUser, getMembershipTerm, (req, res, next) => {
             var userData = req.user;
             var memberShipData = req.memberShipLevel;
             var freq = req.body.freq == 'Annually' ? 'YEAR' : 'MONTH';
-            var fee = req.body.freq == 'Annually' ? memberShipData.fee : (memberShipData.fee / 10)
+            var memberShipFee = memberShipData.fee;
+            var fee;
+            if(req.body.coverCC){
+                var percentage = req.body.coveredFeesPercent;
+                if(freq == 'MONTH'){
+                    var monthlyFee = memberShipFee/10;
+                    var percentageFee = monthlyFee * (percentage/100);
+                    fee  = monthlyFee+percentageFee;
+                }else{
+                    var percentageFee = memberShipFee * (percentage/100)
+                    fee = memberShipFee + percentageFee
+                }
+            }else{
+                if(freq == 'MONTH'){
+                    var monthlyFee = memberShipFee/10;
+                    fee  = monthlyFee;
+                }else{
+                    fee = memberShipFee
+                }
+            }
             var payMentDetail = req.body.user;
             var data = {
                 "accountId": userData['Account ID'],
@@ -43,13 +64,13 @@ router.post('/register', getUser, getMembershipTerm, (req, res, next) => {
                 "termStartDate": startDate,
                 "termEndDate": endDate,
                 "transactionDate": startDate,
-                "fee": fee,
+                "fee": fee.toFixed(2),
                 "sendAcknowledgeEmail": true,
                 "timestamps": {
                     "createdBy": userData['Account ID'],
                 },
                 "payments": [{
-                    "amount": fee,
+                    "amount": fee.toFixed(2) ,
                     "creditCardOnline": {
                         "billingAddress": {
                             "addressLine1": payMentDetail.address,
@@ -66,7 +87,6 @@ router.post('/register', getUser, getMembershipTerm, (req, res, next) => {
                     "tenderType": 4
                 }]
             }
-            console.log(data, 'DATA')
             neon.memberShipRegistration(data).then((result) => {
                 res.status(200).json(result.data)
             }).catch((err) => {
