@@ -1,41 +1,49 @@
 var nodemailer = require('nodemailer');
 
 let transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_SERVICE, // true for 465, false for other ports
-    auth: {
-        // user: 'matt@moonello.com',
-        // pass: '#Vmoca987'
-        user: process.env.EMAIL, // generated ethereal user
-        pass: process.env.PASSWORD // generated ethereal password
-    }
+  service: process.env.EMAIL_SERVICE, // true for 465, false for other ports
+  auth: {
+    // user: 'matt@moonello.com',
+    // pass: '#Vmoca987'
+    user: process.env.EMAIL, // generated ethereal user
+    pass: process.env.PASSWORD // generated ethereal password
+  }
 })
 
 module.exports = {
-    sendFeedbackEmail(data, user) {
-        transporter.sendMail({
-            from: 'Virginia Moca <vmoca.org>', // sender address
-            to: 'jayesh203.jp@gmail.com', // list of receivers
-            subject: "Feedback Email", // Subject line
-            html: ` 
+  sendFeedbackEmail(data, user) {
+    console.log(user);
+    return new Promise((resolve, reject) => {
+      transporter.sendMail({
+        from: 'Virginia Moca <vmoca.org>', // sender address
+        to: 'jayesh203.jp@gmail.com', // list of receivers
+        subject: "Feedback Email", // Subject line
+        html: ` 
             <h3>Feedback from User : ${user.firstName}</h3>
-            <h3>Email : ${user.email}</h3>
-            <h3>Address : ${user.address}</h3>
-            <h3>City : ${user.city}</h3>
-            <h3>State/Province : ${user.state}</h3>
-            <h3>Phone : ${user.phone}</h3>
-            <br>
-            <h4>Is Member of VMOCA ? : ${data.member}</h4> 
-            <h4>Any Children below 18 ? : ${data.childrean}</h4>
-            <h4>From where ${user.firstName} heard about VMOCA ? : ${data.exhibitions[0]}</h4>
+            <p>Email : ${user.email}</p>
+            <p>Address : </p>
+            <p>${user.address}</p>
+            <p>${user.city}, ${user.state}</p>
+            <p>Phone : ${user.phone}</p>
+            <p>Is Member of VMOCA ? : ${data.member}</p> 
+            <p>Any Children below 18 ? : ${data.childrean}</p>
+            <p>From where ${user.firstName} heard about VMOCA ? : ${data.exhibitions[0]}</p>
             ` // html body
-        })
-    },
-    sendTicketEmail(user, eventDetail, noOfTickets, date) {
-        transporter.sendMail({
-            from: 'Virginia Moca <vmoca.org>', // sender address
-            to: user['Email 1'], // list of receivers
-            subject: "Ticket Confirmed!", // Subject line
-            html: `<!doctype html>
+      })
+      .then(result =>{
+        resolve(result)
+      })
+      .catch(err =>{
+        reject(err);
+      })
+    })
+  },
+  sendTicketEmail(user, eventDetail, noOfTickets, date) {
+    transporter.sendMail({
+      from: 'Virginia Moca <vmoca.org>', // sender address
+      to: user['Email 1'], // list of receivers
+      subject: "Ticket Confirmed!", // Subject line
+      html: `<!doctype html>
             <html>
               <head>
                 <meta name="viewport" content="width=device-width">
@@ -167,6 +175,6 @@ module.exports = {
                 </table>
               </body>
             </html>` // html body
-        })
-    }
+    })
+  }
 }

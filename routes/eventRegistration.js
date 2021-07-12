@@ -24,8 +24,9 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
     } else {
         var results = req.user;
         var user = results;
+        console.log(req.body.date)
         var todaysDate = new Date();
-        var date = new Date();
+        var date = new Date(req.body.date);
         var registrationDate = date.getFullYear() + '-' + parseInt(date.getMonth() + 1) + '-' + date.getDate() + 'T' + '00:00:00Z';
         var payment;
         var registrationAmount;
@@ -79,7 +80,7 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
         neon.eventRegistrations(data)
             .then((result) => {
                 if (result.status == 200) {
-                    sendTicketEmail(user, eventDetail, req.body.attendees.length, registrationDate);
+                    sendTicketEmail(user, eventDetail, req.body.attendees.length, req.body.date);
                     res.status(200).json({ result: result.data });
                 }
             }).catch((err) => {
