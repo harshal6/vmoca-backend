@@ -4,7 +4,7 @@ var router = express.Router();
 var neonCrm = require('../api/neonApi');
 const getUser = require('../middleware/getUser');
 
-let neon = new neonCrm.Client(process.env.USERNAME, process.env.API)
+let neon = new neonCrm.Client('virginiamocasandbox', process.env.API)
 
 const nodemailer = require('nodemailer');
 const { sendTicketEmail } = require('../helpers/email');

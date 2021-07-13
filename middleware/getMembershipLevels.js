@@ -1,5 +1,5 @@
 var neonCrm = require('../api/neonApi');
-let neon = new neonCrm.Client(process.env.USERNAME, process.env.API)
+let neon = new neonCrm.Client('virginiamocasandbox', process.env.API)
 
 module.exports = async (req, res, next) => {
     try {
@@ -16,6 +16,7 @@ module.exports = async (req, res, next) => {
         var membershipData = {level : memberShipLevel[0],term : memberShipTerm[0]};
         req.memberShip = membershipData
     } catch (error) {
+        console.log(error.response.data)
         req.memberShip = ''
     }
     next();

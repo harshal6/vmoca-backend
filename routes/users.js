@@ -5,7 +5,7 @@ var router = express.Router();
 // Neon Instance
 let neonCrm = require('../api/neonApi');
 
-neon = new neonCrm.Client(process.env.USERNAME, process.env.API)
+neon = new neonCrm.Client('virginiamocasandbox', process.env.API)
 
 router.post('/signup', (req, res, next) => {
     neon.findAccount(req.body.email).then((result) => {

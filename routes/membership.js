@@ -7,7 +7,7 @@ const getMembershipLevels = require('../middleware/getMembershipLevels');
 
 //Neon CRM
 var neonCrm = require('../api/neonApi');
-let neon = new neonCrm.Client(process.env.USERNAME, process.env.API);
+let neon = new neonCrm.Client('virginiamocasandbox', process.env.API);
 
 router.post('/register', getUser, getMembershipLevels, (req, res, next) => {
 

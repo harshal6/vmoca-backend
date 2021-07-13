@@ -3,7 +3,7 @@ var router = express.Router();
 
 var neonCrm = require('../api/neonApi');
 const getUser = require('../middleware/getUser');
-let neon = new neonCrm.Client(process.env.USERNAME, process.env.API);
+let neon = new neonCrm.Client('virginiamocasandbox', process.env.API);
 
 router.post('/donate', getUser, (req, res, next) => {
     console.log(req.body)
