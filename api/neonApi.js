@@ -37,7 +37,7 @@ class Client {
                     field: "Account ID",
                     operator: "EQUAL",
                     value: userId,
-                }, ],
+                },],
             },
                 this.config
             ).then((result) => {
@@ -52,7 +52,7 @@ class Client {
         return new Promise((resolve, reject) => {
             axios.post(
                 `${neonCrmBaseUrl}/accounts/search/`, {
-                outputFields: ["Account ID", "Email 1", "First Name", "Last Name"],
+                outputFields: ["Account ID", "Email 1", "First Name", "Last Name","Phone 1 Number", "Address Line 1", "Address Line 2", "State/Province", "City", "Zip Code", "Country"],
                 pagination: {
                     pageSize: 1,
                 },
@@ -73,12 +73,12 @@ class Client {
         })
     }
 
-    async createAccount(email, firstName, lastName, phone, source = '') {
+    async createAccount(email, firstName, lastName, phone, address1, address2, state, zip, city) {
         return new Promise((resolve, reject) => {
-            axios.post(`${neonCrmBaseUrl}/accounts`, {
+            var data = {
                 individualAccount: {
                     origin: {
-                        originDetail: source,
+                        originDetail: '',
                     },
                     primaryContact: {
                         email1: email,
@@ -87,10 +87,17 @@ class Client {
                         addresses: [{
                             isPrimaryAddress: true,
                             phone1: phone,
+                            addressLine1: address1,
+                            addressLine2: address2,
+                            zipCode: zip,
+                            city : city,
+                            // stateProvince: state
                         },],
                     },
                 },
-            }, this.config)
+            };
+            console.log(data)
+            axios.post(`${neonCrmBaseUrl}/accounts`,data , this.config)
                 .then((result) => {
                     resolve(result.data);
                 }).catch((err) => {

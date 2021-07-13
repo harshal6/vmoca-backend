@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var moment = require('moment');
 
 //Middlewares
 var getUser = require('../middleware/getUser');
@@ -18,19 +19,20 @@ router.post('/register', getUser, getMembershipLevels, (req, res, next) => {
         if (req.user == '') {
             res.status(404).json({ message: 'User Not Found' });
         } else {
-            var todaysDate = new Date();
-            var startDate = todaysDate.toISOString();
-            var endDate = todaysDate.toISOString();
+            var startDate = moment().toISOString();
+            var endDate = moment().add(1, 'years').toISOString();
+            var renew, freq;
             if (req.body.freq == 'Annually') {
-                todaysDate.setFullYear(todaysDate.getFullYear() + 1)
-                endDate = todaysDate.toISOString();
+                var termEndDate = moment().add(1, 'years').toISOString()
+                renew = true;
+                freq = 'YEAR'
             } else {
-                todaysDate.setMonth(todaysDate.getMonth() + 1)
-                endDate = todaysDate.toISOString();
+                freq = 'MONTH'
+                renew = true;
+                termEndDate = moment().add(1, 'years').toISOString();
             }
             var userData = req.user;
             var memberShipData = req.memberShip;
-            var freq = req.body.freq == 'Annually' ? 'YEAR' : 'MONTH';
             var memberShipFee = memberShipData.term.fee;
             var fee;
             if(req.body.coverCC){
@@ -58,11 +60,11 @@ router.post('/register', getUser, getMembershipLevels, (req, res, next) => {
                 "membershipLevel": memberShipData.level,
                 "termDuration": memberShipData.term.duration,
                 "enrollType": memberShipData.term.type,
-                "termUnit": memberShipData.term.unit,
+                "termUnit": freq,
                 "termStartDate": startDate,
-                "termEndDate": endDate,
+                "termEndDate": termEndDate,
                 "transactionDate": startDate,
-                "fee": fee.toFixed(2),
+                "fee": (fee * (req.body.coveredFeesPercent/100)).toFixed(2),
                 "sendAcknowledgeEmail": true,
                 "timestamps": {
                     "createdBy": userData['Account ID'],

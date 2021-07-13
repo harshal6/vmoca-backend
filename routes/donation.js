@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var moment = require('moment');
+
 
 var neonCrm = require('../api/neonApi');
 const getUser = require('../middleware/getUser');
@@ -24,44 +26,70 @@ router.post('/donate', getUser, (req, res, next) => {
 
     var today = yyyy + '-' + mm + '-' + dd;
     var nextDate;
-    
-    if (req.body.type == 'MONTH') {
-        mm = parseInt(mm) + 1;
-        nextDate = `${yyyy}-${mm}-${dd}`
-    } else if (req.body.type == 'YEAR') {
+    var type;
+    var period ;
+    if (req.body.type == 'Monthly') {
+        type = 'MONTH';
+        period = 1;
+        nextDate = moment().add(1, 'months').toISOString().split('T')[0]
+    } else if (req.body.type == 'One-time') {
+        period = 1
         yyyy = parseInt(yyyy) + 1;
-        nextDate = `${yyyy}-${mm}-${dd}`
+        nextDate = moment().add(1, 'years').toISOString().split('T')[0]
+        type = 'YEAR';
+    } else if (req.body.type == 'Weekly') {
+        period = 1;
+        type = 'WEEK';
+        nextDate = moment().add(1, 'weeks').toISOString().split('T')[0];
+    } else if(req.body.type == 'Bi-weekly'){
+        period = 2
+        type = 'WEEK';
+        nextDate = moment().add(2, 'weeks').toISOString().split('T')[0];
+    }else if (req.body.type == '2-months'){
+        period = 2
+        type = 'MONTH';
+        nextDate = moment().add(2, 'months').toISOString().split('T')[0];
+    }else if(req.body.type == 'Quarterly'){
+        period = 3
+        type = 'MONTH';
+        nextDate = moment().add(3, 'months').toISOString().split('T')[0];
+    }else if(req.body.type == '6-months'){
+        period = 6
+        type = 'MONTH';
+        nextDate = moment().add(6, 'months').toISOString().split('T')[0];
+    }else if(req.body.type == 'Annually'){
+        period = 1
+        type = 'YEAR';
+        nextDate = moment().add(1, 'years').toISOString().split('T')[0];
     }
-
     if (req.body.recurringDonation == "on") {
         var data = {
-            "donorCoveredFee": req.body.amount * (3/100),
+            "donorCoveredFee": (req.body.amount * (req.body.coveredFeesPercent/100)).toFixed(2),
             "accountId": user['Account ID'],
-            "amount": req.body.amount,
-            "endDate": `${yyyy + 1}-${mm}-${dd}`,
+            "amount": req.body.amount ,
+            "endDate": moment().add(1, 'years').toISOString().split('T')[0],
             "nextDate": nextDate,
             "payment": {
-                "amount": req.body.amount,
+                "amount":req.body.amount,
                 "creditCardOnline": {
                     "billingAddress": {
                         "addressLine1": user['Address Line 1'],
                         "addressLine2": user['Address Line 2'],
                         "city": user.City,
-                        "stateProvinceCode": user['State/Province'],
-                        "zipCode": user['Zip Code'],
+                        // "stateProvinceCode": user['State/Province'],
+                        "zipCode": '94027',
                     },
                     "cardHolderEmail": user['Email 1'],
                     "token": req.body.token
                 },
                 "tenderType": 4
             },
-            "recurringPeriod": 1,
-            "recurringPeriodType": req.body.type,
+            "recurringPeriod": period,
+            "recurringPeriodType": type,
             "timestamps": {
                 "createdBy": user['Account ID'],
             }
         }
-        console.log(data)
         neon.recurringDonation(data).then((result) => {
             console.log(result)
             res.json(result.data);
@@ -107,7 +135,7 @@ router.post('/donate', getUser, (req, res, next) => {
                         "addressLine1": req.body.address,
                         "addressLine2": req.body.address2,
                         "city": req.body.city,
-                        "stateProvinceCode": req.body.state,
+                        // "stateProvinceCode": req.body.state,
                         "zipCode": req.body.zipCode,
                     },
                     "cardHolderEmail": user['Email 1'],
@@ -116,7 +144,6 @@ router.post('/donate', getUser, (req, res, next) => {
                 "tenderType": 4
             }]
         }
-        console.log(data);
         neon.saveDonation(data).then((result) => {
             res.json(result.data);
         }).catch((err) => {
