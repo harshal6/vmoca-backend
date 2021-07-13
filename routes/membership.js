@@ -64,13 +64,13 @@ router.post('/register', getUser, getMembershipLevels, (req, res, next) => {
                 "termStartDate": startDate,
                 "termEndDate": termEndDate,
                 "transactionDate": startDate,
-                "fee": (fee * (req.body.coveredFeesPercent/100)).toFixed(2),
+                "fee": fee.toFixed(2),
                 "sendAcknowledgeEmail": true,
                 "timestamps": {
                     "createdBy": userData['Account ID'],
                 },
                 "payments": [{
-                    "amount": fee.toFixed(2) ,
+                    "amount": fee.toFixed(2),
                     "creditCardOnline": {
                         "billingAddress": {
                             "addressLine1": payMentDetail.address,
@@ -87,6 +87,7 @@ router.post('/register', getUser, getMembershipLevels, (req, res, next) => {
                     "tenderType": 4
                 }]
             }
+            console.log(req.body.coveredFeesPercent)
             neon.memberShipRegistration(data).then((result) => {
                 res.status(200).json(result.data)
             }).catch((err) => {
