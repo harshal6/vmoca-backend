@@ -38,7 +38,7 @@ module.exports = {
       })
     })
   },
-  sendTicketEmail(user, eventDetail, noOfTickets, date) {
+  sendTicketEmail(user, eventDetail, noOfTickets, date, confirmationId) {
     transporter.sendMail({
       from: 'Virginia Moca <vmoca.org>', // sender address
       to: user['Email 1'], // list of receivers
@@ -157,6 +157,7 @@ module.exports = {
                                   <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;">
                                     <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Hi ${user['First Name']},</p>
                                     <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Congratulations, Your ticket for Event ${eventDetail.name} is confirmed. Here are the details of Event.</p>
+                                    <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Ticket Id  : ${confirmationId}<v/p>
                                     <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Number of Tickets : ${noOfTickets}<v/p>
                                     <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Reserved Event Date  : ${date.split("T")[0]} <v/p>
                                   </td>

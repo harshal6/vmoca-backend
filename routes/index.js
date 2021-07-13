@@ -17,7 +17,7 @@ router.post('/sendEmail', (req, res, next) => {
     console.log(req.body)
     sendFeedbackEmail(req.body.formData, req.body.user)
     .then(result =>{
-        res.status(200).json({message : "Successfully Sent Email"})
+        res.status(200).json({message : "Reserve Tickets Complete"})
     }).catch(err =>{
         console.log(err)
         res.status(500).json({message : "Somethign went wrong"});

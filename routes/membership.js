@@ -3,16 +3,16 @@ var router = express.Router();
 
 //Middlewares
 var getUser = require('../middleware/getUser');
-const getMembershipTerm = require('../middleware/getMembershipTerm');
+const getMembershipLevels = require('../middleware/getMembershipLevels');
 
 //Neon CRM
 var neonCrm = require('../api/neonApi');
-let neon = new neonCrm.Client('virginiamocasandbox', process.env.API);
+let neon = new neonCrm.Client(process.env.USERNAME, process.env.API);
 
-router.post('/register', getUser, getMembershipTerm, (req, res, next) => {
+router.post('/register', getUser, getMembershipLevels, (req, res, next) => {
 
-    console.log(req.body)
-    if (req.memberShipLevel == '') {
+    console.log(req.memberShip)
+    if (req.memberShip == '') {
         res.status(404).json({ message: "No Membership FOund" });
     } else {
         if (req.user == '') {
@@ -29,9 +29,9 @@ router.post('/register', getUser, getMembershipTerm, (req, res, next) => {
                 endDate = todaysDate.toISOString();
             }
             var userData = req.user;
-            var memberShipData = req.memberShipLevel;
+            var memberShipData = req.memberShip;
             var freq = req.body.freq == 'Annually' ? 'YEAR' : 'MONTH';
-            var memberShipFee = memberShipData.fee;
+            var memberShipFee = memberShipData.term.fee;
             var fee;
             if(req.body.coverCC){
                 var percentage = req.body.coveredFeesPercent;
@@ -54,13 +54,11 @@ router.post('/register', getUser, getMembershipTerm, (req, res, next) => {
             var payMentDetail = req.body.user;
             var data = {
                 "accountId": userData['Account ID'],
-                "membershipTerm": {
-                    "id": memberShipData.id
-                },
-                "membershipLevel": memberShipData.membershipLevel,
-                "termDuration": 1,
-                "enrollType": "JOIN",
-                "termUnit": freq,
+                "membershipTerm": memberShipData.term,
+                "membershipLevel": memberShipData.level,
+                "termDuration": memberShipData.term.duration,
+                "enrollType": memberShipData.term.type,
+                "termUnit": memberShipData.term.unit,
                 "termStartDate": startDate,
                 "termEndDate": endDate,
                 "transactionDate": startDate,
@@ -91,6 +89,7 @@ router.post('/register', getUser, getMembershipTerm, (req, res, next) => {
                 res.status(200).json(result.data)
             }).catch((err) => {
                 console.log(err.response)
+                res.json(err.response)
             });
         }
     }

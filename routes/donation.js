@@ -3,9 +3,10 @@ var router = express.Router();
 
 var neonCrm = require('../api/neonApi');
 const getUser = require('../middleware/getUser');
-let neon = new neonCrm.Client('virginiamocasandbox', process.env.API);
+let neon = new neonCrm.Client(process.env.USERNAME, process.env.API);
 
 router.post('/donate', getUser, (req, res, next) => {
+    console.log(req.body)
     var user = req.user;
     req.body.accountId = user['Account ID'];
     var date = new Date();
@@ -55,7 +56,7 @@ router.post('/donate', getUser, (req, res, next) => {
                 "tenderType": 4
             },
             "recurringPeriod": 1,
-            "recurringPeriodType": "MONTH",
+            "recurringPeriodType": req.body.type,
             "timestamps": {
                 "createdBy": user['Account ID'],
             }

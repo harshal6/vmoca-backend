@@ -4,7 +4,7 @@ var router = express.Router();
 var neonCrm = require('../api/neonApi');
 const getUser = require('../middleware/getUser');
 
-let neon = new neonCrm.Client('virginiamocasandbox', process.env.API)
+let neon = new neonCrm.Client(process.env.USERNAME, process.env.API)
 
 const nodemailer = require('nodemailer');
 const { sendTicketEmail } = require('../helpers/email');
@@ -26,21 +26,23 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
         var user = results;
         console.log(req.body.date)
         var todaysDate = new Date();
-        var date = new Date(req.body.date);
-        var registrationDate = date.getFullYear() + '-' + parseInt(date.getMonth() + 1) + '-' + date.getDate() + 'T' + '00:00:00Z';
         var payment;
         var registrationAmount;
+        var date;
         if (req.body.eventId == '9695') {
+            date = new Date(req.body.date);
+            var registrationDate = date.getFullYear() + '-' + parseInt(date.getMonth() + 1) + '-' + date.getDate() + 'T' + '00:00:00Z';
             ticketId = null;
             tickets = [{ attendees: req.body.attendees }]
             payment = null;
             registrationAmount = 0;
         } else {
-            registrationAmount = req.body.amount;
+            date = new Date();
+            registrationDate = date.getFullYear() + '-' + parseInt(date.getMonth() + 1) + '-' + date.getDate() + 'T' + '00:00:00Z'
+            registrationAmount = req.body.amount * req.body.attendees.length;
             ticketId = 3504;
             payment = [{
                 "amount": registrationAmount ,
-                "id": "1234",
                 "creditCardOnline": {
                     "billingAddress": {
                         "addressLine1": req.body.addressLine1,
@@ -80,7 +82,8 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
         neon.eventRegistrations(data)
             .then((result) => {
                 if (result.status == 200) {
-                    sendTicketEmail(user, eventDetail, req.body.attendees.length, req.body.date);
+                    console.log(result.data)
+                    sendTicketEmail(user, eventDetail, req.body.attendees.length, req.body.date, result.data.id);
                     res.status(200).json({ result: result.data });
                 }
             }).catch((err) => {

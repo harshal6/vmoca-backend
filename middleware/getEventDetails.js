@@ -1,5 +1,5 @@
 let neonCrm = require('../api/neonApi');
-let neon = new neonCrm.Client('virginiamocasandbox', process.env.API);
+let neon = new neonCrm.Client(process.env.USERNAME, process.env.API);
 
 
 module.exports = async(req, res, next) => {

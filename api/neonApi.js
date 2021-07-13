@@ -143,7 +143,17 @@ class Client {
         })
     }
 
-    async memberShipTerms() {
+    async membershipLevels() {
+        return new Promise((resolve, reject) => {
+            axios.get(`${neonCrmBaseUrl}/memberships/levels`, this.config).then((result) => {
+                resolve(result)
+            }).catch((err) => {
+                reject(err)
+            });
+        })
+    }
+
+    async membershipTerms() {
         return new Promise((resolve, reject) => {
             axios.get(`${neonCrmBaseUrl}/memberships/terms`, this.config).then((result) => {
                 resolve(result)
