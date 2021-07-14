@@ -62,11 +62,17 @@ router.post('/donate', getUser, (req, res, next) => {
         type = 'YEAR';
         nextDate = moment().add(1, 'years').toISOString().split('T')[0];
     }
-    if (req.body.recurringDonation == "on") {
+    console.log('enters if');
+    console.log(req.body.recurringDonation);
+    if (req.body.recurringDonation === "on") {
+      const donorCoveredFee = Number(req.body.amount * (Number(req.body.coveredFeesPercent)/100)).toFixed(2);
+      console.log(donorCoveredFee);
+      const totalAmount = Number(req.body.amount) + Number(donorCoveredFee);
+      console.log(totalAmount);
         var data = {
-            "donorCoveredFee": (req.body.amount * (req.body.coveredFeesPercent/100)).toFixed(2),
+            donorCoveredFee,
             "accountId": user['Account ID'],
-            "amount": req.body.amount ,
+            "amount": totalAmount,
             "endDate": moment().add(1, 'years').toISOString().split('T')[0],
             "nextDate": nextDate,
             "payment": {
@@ -92,7 +98,16 @@ router.post('/donate', getUser, (req, res, next) => {
         }
         neon.recurringDonation(data).then((result) => {
             console.log(result)
-            res.json(result.data);
+          const configData = JSON.parse(result.config.data);
+          const data={
+            paymentResponse: result.data,
+            configData: {amount:configData.amount,
+            recurringPeriod: configData.recurringPeriod,
+            recurringPeriodType: configData.recurringPeriodType,
+            },
+            status:result.status
+          };
+            res.json(data);
         }).catch((err) => {
             console.log(err.response)
             res.status(401).json(err);
