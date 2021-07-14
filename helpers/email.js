@@ -27,7 +27,7 @@ module.exports = {
             <p>Phone : ${user.phone}</p>
             <p>Is Member of VMOCA ? : ${data.member}</p> 
             <p>Any Children below 18 ? : ${data.childrean}</p>
-            <p>From where ${user.firstName} heard about VMOCA ? : ${data.exhibitions[0]}</p>
+            <p>From where ${user.firstName} heard about VMOCA ? : ${data.exhibitions}</p>
             ` // html body
       })
       .then(result =>{
