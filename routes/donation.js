@@ -62,17 +62,17 @@ router.post('/donate', getUser, (req, res, next) => {
         type = 'YEAR';
         nextDate = moment().add(1, 'years').toISOString().split('T')[0];
     }
-    console.log('enters if');
     console.log(req.body.recurringDonation);
-    if (req.body.recurringDonation === "on") {
-      const donorCoveredFee = Number(req.body.amount * (Number(req.body.coveredFeesPercent)/100)).toFixed(2);
-      console.log(donorCoveredFee);
-      const totalAmount = Number(req.body.amount) + Number(donorCoveredFee);
-      console.log(totalAmount);
+  const donorCoveredFee = Number(req.body.amount * (Number(req.body.coveredFeesPercent)/100)).toFixed(2);
+  console.log(donorCoveredFee);
+  const totalAmount = Number(req.body.amount) + Number(donorCoveredFee);
+  console.log(totalAmount);
+
+  if (req.body.recurringDonation === "on") {
+
         var data = {
-            donorCoveredFee,
             "accountId": user['Account ID'],
-            "amount": totalAmount,
+            "amount": req.body.amount,
             "endDate": moment().add(1, 'years').toISOString().split('T')[0],
             "nextDate": nextDate,
             "payment": {
@@ -83,7 +83,7 @@ router.post('/donate', getUser, (req, res, next) => {
                         "addressLine2": user['Address Line 2'],
                         "city": user.City,
                         // "stateProvinceCode": user['State/Province'],
-                        "zipCode": '94027',
+                        "zipCode": user['Zip Code'],
                     },
                     "cardHolderEmail": user['Email 1'],
                     "token": req.body.token
