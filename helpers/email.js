@@ -42,7 +42,7 @@ module.exports = {
     })
   },
   sendTicketEmail(user, eventDetail, noOfTickets, date, confirmationId) {
-    transporter.sendMail({
+    let response = await transporter.sendMail({
       from: 'Virginia Moca <vmoca.org>', // sender address
       to: user['Email 1'], // list of receivers
       subject: "Ticket Confirmed!", // Subject line
@@ -179,6 +179,7 @@ module.exports = {
                 </table>
               </body>
             </html>` // html body
-    })
+    });
+    console.log(response)
   }
 }
