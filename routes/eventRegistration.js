@@ -83,7 +83,7 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
             .then((result) => {
                 if (result.status == 200) {
                     console.log(result.data)
-                    sendTicketEmail(user, eventDetail, req.body.attendees.length, req.body.date, result.data.id);
+                   // sendTicketEmail(user, eventDetail, req.body.attendees.length, req.body.date, result.data.id);
                     res.status(200).json({ result: result.data });
                 }
             }).catch((err) => {
