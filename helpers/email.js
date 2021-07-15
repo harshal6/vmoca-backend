@@ -31,10 +31,13 @@ module.exports = {
             ` // html body
       })
       .then(result =>{
+               console.log(result,'result of email');
         resolve(result)
-      })
+       })
       .catch(err =>{
+         console.log(err,'result of error');
         reject(err);
+
       })
     })
   },
