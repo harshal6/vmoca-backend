@@ -41,7 +41,7 @@ module.exports = {
       })
     })
   },
-  sendTicketEmail(user, eventDetail, noOfTickets, date, confirmationId) {
+ async sendTicketEmail(user, eventDetail, noOfTickets, date, confirmationId) {
     let response = await transporter.sendMail({
       from: 'Virginia Moca <vmoca.org>', // sender address
       to: user['Email 1'], // list of receivers
