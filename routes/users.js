@@ -27,22 +27,23 @@ router.post('/signup', (req, res, next) => {
     });
 })
 
-router.post('/getUserByAccountId', async(req, res, next) => {
-        console.log(req.body)
-        if(req.body.authorization_code !== 'undefined'){
-            var data = {
-                client_id: 'kkFM5CO3MEs5Ra_Pp6Bb6EGlTR9krkrRHpw8NQC7ddPoVgcIFQNbAHqA5SyCMk72rYJUUFB2jsqFN5rcsxRoFYMOh1JMr8YFdV2cWQ7enzs=',
-                client_secret: 'a1eaecfa-0f12-38b0-a5b9-5d605cccd5c5',
-                code: req.body.authorization_code.trim(),
-            }
-            var url = `https://www.z2systems.com/np/oauth/token?client_id=${data.client_id}&client_secret=${data.client_secret}&redirect_uri=http://127.0.0.1:8000/payment&code=${data.code}&grant_type=authorization_code`;
-            let response = await axios.post(url, {}, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-            neon.findAccountUsingId(response.data.access_token).then(result => {
-                res.json({ user: result.data.searchResults[0] })
-            }).catch(err => {
-                res.json(err)
-            })
-        }
+router.post('/getUserByAccountId', async (req, res, next) => {
+  console.log(req.body)
+  if (req.body.authorization_code !== 'undefined') {
+    console.log(process.env.CLIENT_ID);
+    var data = {
+      client_id: process.env.CLIENT_ID,
+      client_secret: process.env.CLIENT_SECRET,
+      code: req.body.authorization_code.trim(),
+    }
+    var url = `${process.env.CLIENT_URL}?client_id=${data.client_id}&client_secret=${data.client_secret}&redirect_uri=http://127.0.0.1:8000/payment&code=${data.code}&grant_type=authorization_code`;
+    let response = await axios.post(url, {}, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+    neon.findAccountUsingId(response.data.access_token).then(result => {
+      res.json({ user: result.data.searchResults[0] })
+    }).catch(err => {
+      res.json(err)
+    })
+  }
 })
 
 module.exports = router;

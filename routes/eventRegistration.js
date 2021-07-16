@@ -64,9 +64,10 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
             var attendees = req.body.attendees;
             var tickets = [];
             attendees.forEach(element => {
-                var attendees = [];
-                attendees.push(element)
-                tickets.push({ attendees, ticketId })
+                // var arr = [];
+                // arr.push(element)
+               // {attendees: {firstName: 'e'}}
+                tickets.push({ attendees: element.firstName, ticketId })
             });
         }
         var data = {
@@ -83,12 +84,12 @@ router.post('/register', getUser, getEventDetails, (req, res, next) => {
             .then((result) => {
                 if (result.status == 200) {
                     console.log(result.data)
-                   // sendTicketEmail(user, eventDetail, req.body.attendees.length, req.body.date, result.data.id);
+                    sendTicketEmail(user, eventDetail, req.body.attendees.length, req.body.startDate, result.data.id);
                     res.status(200).json({ result: result.data });
                 }
             }).catch((err) => {
                 console.log(err.response)
-                res.status(401).json({ err: err.response });
+               // res.status(401).json({ err: err.response });
             });
     }
 })
