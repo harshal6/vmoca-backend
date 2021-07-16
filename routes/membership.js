@@ -87,12 +87,12 @@ router.post('/register', getUser, getMembershipLevels, (req, res, next) => {
                     "tenderType": 4
                 }]
             }
-            console.log(req.body.coveredFeesPercent)
+           // console.log(req.body.coveredFeesPercent)
             neon.memberShipRegistration(data).then((result) => {
-                res.status(200).json(result.data)
+              res.status(200).json({ ...result.data, fee: data.membershipTerm.fee })
             }).catch((err) => {
-                console.log(err.response)
-                res.json(err.response)
+              console.log(err.response)
+              res.json(err.response)
             });
         }
     }
